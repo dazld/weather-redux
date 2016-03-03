@@ -1,12 +1,9 @@
-require("babel-register")({
+require('babel-register')({
     presets: [ 'es2015' ]
 });
-const _ = require('lodash');
 const gulp = require('gulp');
 const plumber = require('gulp-plumber');
-const watch = require('gulp-watch');
 const gulpif = require('gulp-if');
-const debug = require('gulp-debug');
 const size = require('gulp-size');
 const notify = require('gulp-notify');
 const connect = require('gulp-connect');
@@ -21,7 +18,7 @@ const app = require('./server');
 const del = require('del');
 const path = require('path');
 const join = path.join,
-        resolve = path.resolve;
+    resolve = path.resolve;
 
 const sass = require('gulp-sass');
 const csso = require('gulp-csso');
@@ -30,12 +27,10 @@ const autoprefixer = require('gulp-autoprefixer');
 const base64 = require('gulp-base64');
 
 const sourcemaps = require('gulp-sourcemaps');
-const concat = require('gulp-concat');
 
 // js builds
 const watchify = require('watchify');
 const browserify = require('browserify');
-const babelify = require('babelify');
 const uglify = require('gulp-uglify');
 const envify = require('envify/custom');
 const buffer = require('vinyl-buffer');
@@ -102,12 +97,9 @@ compiler.transform(envify({
 compiler.on('log', gutil.log);
 compiler.on('error', gutil.log);
 
-compiler.on('update', function() {
-    console.log.apply(console, ['Updated: '].concat([].slice.call(arguments)));
-    bundle();
-});
 
-function bundle (){
+
+function bundle () {
     return compiler.bundle()
         // handle errors
         .on('error', notify.onError('Error: <%= error.message %>'))
@@ -122,8 +114,12 @@ function bundle (){
         .pipe(gulp.dest(STATIC_JS))
         .pipe(liveReload());
 }
+compiler.on('update', function() {
+    console.log.apply(console, ['Updated: '].concat([].slice.call(arguments)));
+    bundle();
+});
 
-gulp.task('js', ['clean:js'],function(){
+gulp.task('js', ['clean:js'],function() {
     return bundle();
 });
 
@@ -148,14 +144,14 @@ gulp.task('serve', ['watch'], function () {
                 connectLiveReload({
                     port: LIVERELOAD_PORT
                 }),
-                mountFolder(server, STATIC_DIR),
+                mountFolder(server, STATIC_DIR)
             ]
         }
     });
 });
 
 function makeCleaner(path) {
-    return function(done){
+    return function(done) {
         del([
             path
         ]).then(function(paths) {
@@ -186,7 +182,7 @@ gulp.task('fonts', ['clean:fonts'], function() {
                 .pipe(liveReload({port: LIVERELOAD_PORT}));
 });
 
-gulp.task('sass', ['clean:css'], function(){
+gulp.task('sass', ['clean:css'], function() {
     return gulp.src(ASSETS_SASS_MAIN)
             .pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
             .on('error', function(err) {
@@ -211,7 +207,7 @@ gulp.task('sass', ['clean:css'], function(){
 
 });
 
-gulp.task('watch', function(){
+gulp.task('watch', function() {
     liveReload.listen();
     gulp.watch(ASSETS_SASS + '/**/*.scss',   ['sass']);
     gulp.watch(ASSETS_FONTS + '/**/*',       ['fonts']);
